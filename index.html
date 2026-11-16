@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Візуальний тренажер: функції в таблицях</title>
+<style>
+:root{--bg:#f4f6f3;--card:#fff;--tx:#1f2a24;--mu:#5c6b62;--ac:#1d7a4f;--acbg:#e3f3ea;--er:#b3261e;--erbg:#fbe9e7;--bd:#d5dbd6;--b0:#cfe3ff;--b1:#ffd9a8;--sr:#fff3a6;--hd:#e9eee9;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a16;--card:#1d2621;--tx:#e8eee9;--mu:#9fb0a5;--ac:#4cc58a;--acbg:#21382c;--er:#ff8a80;--erbg:#3a2220;--bd:#34413a;--b0:#1e3f6b;--b1:#6b4512;--sr:#5c5314;--hd:#27322b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141a16;--card:#1d2621;--tx:#e8eee9;--mu:#9fb0a5;--ac:#4cc58a;--acbg:#21382c;--er:#ff8a80;--erbg:#3a2220;--bd:#34413a;--b0:#1e3f6b;--b1:#6b4512;--sr:#5c5314;--hd:#27322b;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:18px 14px 40px}
+h1{font-size:1.25rem;margin:0 0 2px}.sub{color:var(--mu);margin:0 0 12px;font-size:.9rem}
+.dots{display:flex;gap:6px;margin-bottom:10px}.dots i{flex:1;height:8px;border-radius:4px;background:var(--bd)}.dots i.on{background:var(--ac)}.dots i.cur{background:var(--b1)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px}
+.card h2{font-size:1.05rem;margin:0 0 6px}
+.fx{display:flex;align-items:center;gap:8px;border:1px solid var(--bd);border-radius:8px;padding:6px 10px;margin:10px 0 0;font-family:ui-monospace,Consolas,monospace;min-height:38px;background:var(--card)}
+.fx b{color:var(--mu);font-style:italic;font-family:serif}
+.fx span.r0,.fx span.r1{padding:1px 4px;border-radius:4px}
+.r0{background:var(--b0)}.r1{background:var(--b1)}
+.scroll{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;font-family:ui-monospace,Consolas,monospace;font-size:.9rem;margin:0 auto}
+td,th{border:1px solid var(--bd);padding:5px 6px;text-align:center;min-width:58px;height:32px}
+th{background:var(--hd);color:var(--mu);font-weight:600;font-size:.8rem}
+td.c{cursor:pointer;transition:background .2s}
+td.t{font-family:system-ui,sans-serif;font-size:.8rem;background:var(--hd)}
+td.r0{background:var(--b0)}td.r1{background:var(--b1)}
+td.sel{outline:3px solid var(--ac);outline-offset:-3px;background:var(--sr)}
+td.bad{background:var(--erbg);color:var(--er);font-weight:700}
+td.fl{animation:p .5s}@keyframes p{from{transform:scale(1.25);background:var(--sr)}}
+.hint{color:var(--mu);font-size:.82rem;text-align:center;margin:0}
+.opt{display:block;width:100%;text-align:left;margin:7px 0;padding:10px 12px;border:2px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);font:inherit;font-family:ui-monospace,Consolas,monospace;cursor:pointer}
+.opt:hover{border-color:var(--ac)}.opt.sel{border-color:var(--ac);background:var(--acbg)}.opt.ok{border-color:var(--ac);background:var(--acbg)}.opt.bad{border-color:var(--er);background:var(--erbg)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0;padding:8px;border:2px solid var(--bd);border-radius:10px}
+.row.ok{border-color:var(--ac);background:var(--acbg)}.row.bad{border-color:var(--er);background:var(--erbg)}
+.row .d{flex:1;min-width:180px}
+.ref{font:700 1.3rem ui-monospace,Consolas,monospace;display:flex;align-items:center;gap:2px}
+.chip{width:34px;height:34px;border-radius:8px;border:2px dashed var(--mu);background:var(--card);color:var(--tx);font:700 1rem ui-monospace,monospace;cursor:pointer}
+.chip.on{border:2px solid var(--ac);background:var(--acbg);color:var(--ac)}
+.cp{font-size:.8rem;color:var(--mu);width:100%}
+.btn{margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:var(--ac);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+:root[data-theme="dark"] .btn{color:#0b1a12}
+.btn:disabled{opacity:.5}
+.fb{margin-top:12px;padding:12px;border-radius:10px;font-size:.95rem}
+.fb.ok{background:var(--acbg);border-left:4px solid var(--ac)}.fb.er{background:var(--erbg);border-left:4px solid var(--er)}.fb p{margin:3px 0}
+.big{font-size:2rem;font-weight:700;color:var(--ac)}
+.sl{flex:1;min-width:130px;padding:8px;border-radius:8px;border:2px solid var(--bd);background:var(--card);color:var(--tx);font:inherit}td{white-space:nowrap}.row .d{min-width:150px}</style>
+</head>
+<body>
+<main>
+<h1>Візуальний тренажер: функції в таблицях</h1>
+<p class="sub">9 клас · логічні, математичні та статистичні функції</p>
+<div class="dots" id="dots"></div>
+<div id="app"></div>
+</main>
+<script>
+var L="ABCDEFGHIJK",TOK=/\$?[A-K]\$?\d+(?::\$?[A-K]\$?\d+)?/g;
+function sh(f,dc,dr){return f.replace(/(\$?)([A-K])(\$?)(\d+)/g,function(m,a,c,b,r){return a+(a?c:L[L.indexOf(c)+dc])+b+(b?r:+r+dr)})}
+function pa(a){a=a.replace(/\$/g,"");return[L.indexOf(a[0]),+a.slice(1)]}
+function ad(c,r){return L[c]+r}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function flat(a){var o=[];[].slice.call(a).forEach(function(x){Array.isArray(x)?o.push.apply(o,x):o.push(x)});return o}
+function nums(a){return flat(a).filter(function(x){return typeof x=="number"})}
+function crit(c){var m=/^(>=|<=|<>|>|<|=)?(.*)$/.exec(String(c)),op=m[1]||"=",y=m[2],n=y!==""&&!isNaN(y);
+ return function(x){var w=n?+y:y;if(n&&typeof x!="number")return op=="<>";
+  return op==">"?x>w:op=="<"?x<w:op==">="?x>=w:op=="<="?x<=w:op=="<>"?x!=w:x==w}}
+var CTX={TRUE:true,FALSE:false,
+V:function(a){var v=val(a);return v===""?0:v},
+R:function(a,b){var p=pa(a),q=pa(b),o=[];for(var r=p[1];r<=q[1];r++)for(var c=p[0];c<=q[0];c++)o.push(val(ad(c,r)));return o},
+AND:function(){return flat(arguments).every(Boolean)},OR:function(){return flat(arguments).some(Boolean)},NOT:function(a){return!a},
+IF:function(c,a,b){return c?a:b},
+IFS:function(){var a=arguments;for(var k=0;k<a.length;k+=2)if(a[k])return a[k+1];return"#Н/Д"},
+ROUND:function(x,n){var p=Math.pow(10,n);return Math.round(x*p)/p},
+MOD:function(a,b){return a-b*Math.floor(a/b)},ABS:Math.abs,SQRT:Math.sqrt,
+FACT:function(n){var r=1;for(var k=2;k<=n;k++)r*=k;return r},
+SUM:function(){return nums(arguments).reduce(function(s,x){return s+x},0)},
+AVERAGE:function(){var n=nums(arguments);return n.reduce(function(s,x){return s+x},0)/n.length},
+MIN:function(){return Math.min.apply(null,nums(arguments))},MAX:function(){return Math.max.apply(null,nums(arguments))},
+COUNT:function(){return nums(arguments).length},
+COUNTIF:function(r,c){return flat([r]).filter(crit(c)).length},
+SUMIF:function(r,c,s){var f=crit(c),a=flat([r]),b=s?flat([s]):a,t=0;a.forEach(function(x,k){if(f(x)&&typeof b[k]=="number")t+=b[k]});return t}};
+function js(f){return f.slice(1).split(/("[^"]*")/).map(function(p,k){if(k%2)return p;
+ return p.replace(TOK,function(m){var q=m.replace(/\$/g,"").split(":");return q[1]?'R("'+q[0]+'","'+q[1]+'")':'V("'+q[0]+'")'}).replace(/<>/g,"!=").replace(/(^|[^<>!=])=(?!=)/g,"$1==").replace(/;/g,",").replace(/&/g,"+")}).join("")}
+function ev(f){var r;try{r=Function("c","with(c){return "+js(f)+"}")(CTX)}catch(e){return"#ПОМ"}
+ if(typeof r=="number")return isFinite(r)?Math.round(r*100)/100:"#ДІЛ/0!";
+ if(r===true)return"TRUE";if(r===false)return"FALSE";return r}
+function refs(f){var o=[],n=0,m;TOK.lastIndex=0;while(m=TOK.exec(f)){var q=m[0].replace(/\$/g,"").split(":"),a=pa(q[0]),b=pa(q[1]||q[0]);for(var r=a[1];r<=b[1];r++)for(var c=a[0];c<=b[0];c++)o.push([ad(c,r),n%2]);n++}return o}
+function fxHtml(f){var n=0;return esc(f).replace(TOK,function(m){return'<span class="r'+(n++%2)+'">'+m+"</span>"})}
+
+var T=[
+{k:"rows",title:"Логічні функції AND, OR, NOT",q:"У клітинках A1=12, B1=15, C1=«Так». Визначте результат кожної формули: TRUE чи FALSE.",
+ nc:3,nr:1,cells:{A1:{v:12},B1:{v:15},C1:{v:"Так"}},ch:["TRUE","FALSE"],
+ rows:[['=AND(A1>10;B1<20;C1="Так")',"AND повертає TRUE, лише коли всі умови істинні: 12>10, 15<20, C1=«Так»."],
+ ['=OR(A1="Помилка";B1=0)',"OR дає TRUE, якщо істинна хоча б одна умова. Тут обидві хибні."],
+ ["=NOT(A1=10)","A1=10 хибне (A1=12), а NOT змінює значення на протилежне."],
+ ["=AND(A1>10;B1>20)","B1>20 хибне (15), тож AND повертає FALSE."]]},
+{k:"bld",title:"Функція IF",q:"У стовпці C треба вивести слово «Добре», якщо оцінка вища за 6, і «Задовільно» — в іншому випадку. Яку формулу введемо в C1 і скопіюємо вниз?",
+ nc:3,nr:3,cells:{A1:{v:"Петренко"},B1:{v:10},A2:{v:"Бунич"},B2:{v:8},A3:{v:"Іваненко"},B3:{v:4}},src:"C1",rng:"C3",
+ opts:[['=IF(B1>6;"Добре";"Задовільно")',1,"IF(Умова; Вираз1; Вираз2): Вираз1 — коли умова істинна, Вираз2 — коли хибна. Посилання B1 відносне, тому зсувається вниз."],
+ ['=IF(B1>6;"Задовільно";"Добре")',0,"Вирази місцями переплутано: для оцінки 10 вийшло «Задовільно»."],
+ ['=IF($B$1>6;"Добре";"Задовільно")',0,"Абсолютне посилання $B$1 не зсувається — усі рядки перевіряють лише першу оцінку."],
+ ['=IF(B1<6;"Добре";"Задовільно")',0,"Знак відношення неправильний: умова має бути «більше 6»."]]},
+{k:"bld",title:"Вкладені IF та IFS",q:"Підпишіть успішність: початковий (1–4 бали), середній (5–8), високий (9–12). Яку формулу введемо в C1 і скопіюємо вниз? (Правильних відповідей може бути кілька — оберіть будь-яку.)",
+ nc:3,nr:5,cells:{A1:{v:"Петренко"},B1:{v:10},A2:{v:"Бунич"},B2:{v:8},A3:{v:"Іваненко"},B3:{v:4},A4:{v:"Коваль"},B4:{v:9},A5:{v:"Мельник"},B5:{v:5}},src:"C1",rng:"C5",
+ opts:[['=IF(B1<5;"Початковий";IF(B1<9;"Середній";"Високий"))',1,"Вкладений IF: спочатку відсіюємо <5, потім <9, решта — високий."],
+ ['=IF(B1<5;"Початковий";IF(B1<8;"Середній";"Високий"))',0,"Межу зсунуто: 8 балів уже «Високий», хоча це середній рівень."],
+ ['=IFS(B1<5;"Початковий";B1<9;"Середній")',0,"Жодна умова не виконується для 9 і 10 — IFS повертає помилку #Н/Д. Потрібна остання умова TRUE."],
+ ['=IFS(B1<5;"Початковий";B1<9;"Середній";TRUE;"Високий")',1,"IFS перевіряє умови по черзі, а остання умова TRUE ловить усі решту випадки."]]},
+{k:"rows",title:"Математичні функції",q:"Визначте результат кожної формули.",
+ ch:["3","3.14","5","7","120","-7","720"],
+ rows:[["=ROUND(3.14159;2)","ROUND округлює до вказаної кількості цифр після коми."],
+ ["=MOD(15;4)","MOD — остача від ділення: 15 = 4·3 + 3."],
+ ["=ABS(-7)","ABS — модуль числа, тому результат додатний."],
+ ["=SQRT(25)","SQRT — квадратний корінь: 5·5 = 25."],
+ ["=FACT(5)","FACT — факторіал: 1·2·3·4·5 = 120."]]},
+{k:"bld",title:"Функція SUMIF",q:"У стовпці A — вартість майна, у B — комісія. У D1 потрібно знайти суму комісій лише за майно вартістю понад 160 000 грн. Яку формулу введемо?",
+ nc:4,nr:5,cells:{A1:{v:"Вартість",t:1},B1:{v:"Комісія",t:1},C1:{v:"Сума:",t:1},A2:{v:100000},B2:{v:7000},A3:{v:200000},B3:{v:14000},A4:{v:300000},B4:{v:21000},A5:{v:400000},B5:{v:28000}},src:"D1",rng:"D1",
+ opts:[['=SUMIF(A2:A5;">160000";B2:B5)',1,"SUMIF(діапазон_критеріїв; критерій; діапазон_сумування): умову перевіряємо в A, а додаємо значення з B."],
+ ['=SUMIF(A2:A5;">160000")',0,"Без третього аргументу підсумовується сам діапазон A2:A5 — вийшла сума вартості майна, а не комісії."],
+ ['=SUMIF(B2:B5;">160000";A2:A5)',0,"Діапазони переплутано: комісії не бувають більшими за 160 000, тому результат 0."],
+ ["=SUM(B2:B5)",0,"SUM додає всі комісії без умови."]]},
+{k:"bld",title:"AVERAGE та COUNTIF",q:"У рядку 2 — час користування смартфоном (год/тиждень) 10 учнів, у B4 — середній час. Яку формулу введемо в B5, щоб порахувати, скільки учнів перевищили середній час?",
+ nc:11,nr:5,cells:{A1:{v:"№",t:1},B1:{v:1,t:1},C1:{v:2,t:1},D1:{v:3,t:1},E1:{v:4,t:1},F1:{v:5,t:1},G1:{v:6,t:1},H1:{v:7,t:1},I1:{v:8,t:1},J1:{v:9,t:1},K1:{v:10,t:1},A2:{v:"Годин",t:1},B2:{v:5},C2:{v:3},D2:{v:4},E2:{v:5},F2:{v:2},G2:{v:2},H2:{v:4},I2:{v:6},J2:{v:5},K2:{v:3},A4:{v:"Середнє",t:1},B4:{f:"=AVERAGE(B2:K2)"},A5:{v:"Більше",t:1}},src:"B5",rng:"B5",
+ opts:[['=COUNTIF(B2:K2;">"&B4)',1,"Критерій склеюємо оператором &: рядок «>» + значення B4 (3,9). Рахуються клітинки, більші за середнє."],
+ ['=COUNTIF(B2:K2;">B4")',0,"B4 у лапках — це просто текст, а не посилання, тому умова не працює."],
+ ["=COUNT(B2:K2)",0,"COUNT рахує всі числа в діапазоні (10), без жодної умови."],
+ ["=COUNTIF(B2:K2;B4)",0,"Так шукаємо клітинки, що дорівнюють 3,9, а не перевищують його."]]}
+];
+
+function shuf(a){for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1)),x=a[k];a[k]=a[j];a[j]=x}return a}
+var i=0,pts=0,done=[],tries=0,sel=-1,busy=0,S,app=document.getElementById("app");
+function val(a){var c=S.cells[a];if(!c)return"";if(c.f)return ev(c.f);return c.v}
+function dots(){document.getElementById("dots").innerHTML=T.map(function(_,k){return"<i class='"+(k<i?"on":k==i?"cur":"")+"'></i>"}).join("")}
+function grid(){
+ var t=T[i],sf=S.sel&&S.cells[S.sel]&&S.cells[S.sel].f,hl={};
+ if(sf)refs(sf).forEach(function(x){hl[x[0]]="r"+x[1]});
+ var h='<div class="fx"><b>fx</b><span>'+(sf?fxHtml(sf):(S.sel?esc(val(S.sel)):"—"))+"</span></div><div class='scroll'><table><tr><th></th>";
+ for(var c=0;c<t.nc;c++)h+="<th>"+L[c]+"</th>";h+="</tr>";
+ for(var r=1;r<=t.nr;r++){h+="<tr><th>"+r+"</th>";for(var c=0;c<t.nc;c++){var a=ad(c,r),ce=S.cells[a],v=esc(val(a));
+  if(S.q&&a==t.src&&!ce)v="?";
+  var cl="c"+(ce&&ce.t?" t":"")+(hl[a]?" "+hl[a]:"")+(S.sel==a?" sel":"")+(S.bad[a]?" bad":"")+(S.fl==a?" fl":"");
+  h+="<td class='"+cl+"' onclick='cs(\""+a+"\")'>"+v+"</td>"}h+="</tr>"}
+ return h+"</table></div><p class='hint'>Клацніть клітинку з формулою — побачите, на які клітинки вона посилається</p>";
+}
+function cs(a){if(busy)return;S.sel=a;S.fl=0;draw()}
+function draw(){if(T[i].nc)document.getElementById("gr").innerHTML=grid()}
+function reset(){var t=T[i];S={cells:JSON.parse(JSON.stringify(t.cells||{})),sel:t.src||null,bad:{},q:t.k=="bld"}}
+function render(){
+ if(i>=T.length)return fin();
+ var t=T[i];tries=0;sel=-1;busy=0;dots();reset();if(t.opts)shuf(t.opts);else{shuf(t.rows);shuf(t.ch)}
+ var h='<div class="card"><h2>'+(i+1)+". "+t.title+"</h2><p>"+t.q+'</p><div id="gr"></div>';
+ if(t.k=="rows")t.rows.forEach(function(r,k){h+='<div class="row" id="tr'+k+'"><div class="d ref" style="font-size:1rem">'+esc(r[0])+'</div><select id="s'+k+'" class="sl"><option value="">— оберіть —</option>'+t.ch.map(function(x){return"<option>"+x+"</option>"}).join("")+"</select></div>"});
+ else t.opts.forEach(function(o,k){h+='<button class="opt" onclick="pick('+k+')" id="o'+k+'">'+esc(o[0])+"</button>"});
+ h+='<button class="btn" id="chk" onclick="check()">Перевірити</button><div id="fb"></div></div>';
+ app.innerHTML=h;draw();
+}
+function pick(k){if(busy||document.getElementById("chk").dataset.d)return;sel=k;T[i].opts.forEach(function(_,j){document.getElementById("o"+j).className="opt"+(j==k?" sel":"")})}
+function fill(f,done,sl){
+ var t=T[i],a=pa(t.src),b=pa(t.rng),L2=[];
+ for(var r=a[1];r<=b[1];r++)for(var c=a[0];c<=b[0];c++)L2.push([c,r]);
+ busy=1;S.q=0;var n=0;(function st(){
+  if(n>=L2.length){busy=0;return done()}
+  var p=L2[n++],q=ad(p[0],p[1]);S.cells[q]={f:sh(f,p[0]-a[0],p[1]-a[1])};if(sl)return st();S.sel=q;S.fl=q;draw();setTimeout(st,n==1?200:320)})();
+}
+function ok(first,msg){
+ if(first)pts++;done[i]=first;
+ document.getElementById("fb").innerHTML='<div class="fb ok"><p><b>'+(first?"Правильно!":"Правильно (не з першої спроби)")+"</b></p>"+msg+"</div>";
+ var b=document.getElementById("chk");b.disabled=0;b.dataset.d=1;b.textContent=i<T.length-1?"Далі →":"Результат";b.onclick=function(){i++;render()}}
+function er(msg){document.getElementById("fb").innerHTML='<div class="fb er"><p><b>Поки що неправильно.</b></p>'+msg+"<p>Спробуйте ще раз.</p></div>";document.getElementById("chk").disabled=0}
+function check(){
+ var t=T[i];if(busy)return;
+ if(t.k=="rows"){tries++;var n=0,m="";
+  t.rows.forEach(function(r,k){var s=document.getElementById("s"+k),c=String(ev(r[0])),g=s.value==c;document.getElementById("tr"+k).className="row "+(g?"ok":"bad");if(g){n++;m+="<p>✔ <b>"+esc(r[0])+" → "+c+".</b> "+r[1]+"</p>"}});
+  if(n==t.rows.length)return ok(tries==1,m);
+  return er(m+"<p>Неправильних відповідей: "+(t.rows.length-n)+" (виділені червоним). Обчисліть формулу крок за кроком.</p>")}
+ if(sel<0){document.getElementById("fb").innerHTML='<div class="fb er">Спочатку оберіть відповідь.</div>';return}
+ tries++;var o=t.opts[sel],btn=document.getElementById("chk");btn.disabled=1;
+ reset();draw();var good=!!o[1],rf=t.opts.filter(function(x){return x[1]})[0][0],tmp=S.cells;
+ S.cells=JSON.parse(JSON.stringify(tmp));
+ fill(rf,function(){var ex={};for(var a in S.cells)ex[a]=val(a);S.cells=tmp;S.bad={};S.sel=t.src;
+  document.getElementById("o"+sel).className="opt "+(good?"ok":"bad");
+  fill(o[0],function(){for(var a in ex){if(S.cells[a]&&S.cells[a].f&&val(a)!==ex[a])S.bad[a]=1}draw();
+   if(good)ok(tries==1,"<p>"+o[2]+"</p><p>Клацніть клітинку результату — кольори покажуть, на що вона посилається.</p>");
+   else er("<p>"+o[2]+"</p><p>Клітинки з хибним результатом позначено червоним.</p>")})},1)
+}
+function fin(){
+ dots();var p=pts/T.length,m=p==1?"Відмінно! Ви впевнено користуєтесь функціями.":p>=.6?"Добре! Повторіть теми з помилками.":"Варто повторити логічні, математичні та статистичні функції.";
+ var h='<div class="card"><h2>Результат</h2><div class="big">'+pts+" / "+T.length+"</div><p>"+m+"</p><ul>";
+ T.forEach(function(t,k){h+="<li>"+(done[k]?"✔":"✘")+" "+t.title+(done[k]?"":" — потребує повторення")+"</li>"});
+ app.innerHTML=h+'</ul><p class="hint">Пам’ятайте: аргументи функції записують у дужках і розділяють символом «;».</p><button class="btn" onclick="i=0;pts=0;done=[];render()">Пройти ще раз</button></div>'}
+render();
+</script>
+</body>
+</html>
